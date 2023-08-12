@@ -4,11 +4,11 @@ import io
 import os
 from pathlib import Path
 from typing import Union
-from modal import Image, Stub, method
+# from modal import Image, Stub, method
 
-stub = Stub("controlnet")
+# stub = Stub("controlnet")
 
-TRANSFORMERS_CACHE = "/cache"
+TRANSFORMERS_CACHE = "./cache"
 
 
 def set_scheduler(model, scheduler: str):
@@ -93,23 +93,23 @@ def download_sd():
         sd_pipe.save_pretrained(TRANSFORMERS_CACHE, safe_serialization=True)
 
 
-image = (
-    Image.debian_slim(python_version="3.10")
-    .pip_install(
-        "accelerate",
-        "diffusers[torch]>=0.15.1",
-        "ftfy",
-        "torchvision",
-        "transformers",
-        "triton",
-        "safetensors",
-        "opencv-python-headless",
-        "torch>=2.0.1",
-    )
-    .run_function(download_controlnet)
-    .run_function(download_sd)
-)
-stub.image = image
+# image = (
+    # Image.debian_slim(python_version="3.10")
+    # .pip_install(
+        # "accelerate",
+        # "diffusers[torch]>=0.15.1",
+        # "ftfy",
+        # "torchvision",
+        # "transformers",
+        # "triton",
+        # "safetensors",
+        # "opencv-python-headless",
+        # "torch>=2.0.1",
+    # )
+    # .run_function(download_controlnet)
+    # .run_function(download_sd)
+# )
+# stub.image = image
 
 
 def load_stable_diffusion(model_id: str, controlnet=None, **kwargs):
@@ -192,7 +192,7 @@ class StableDiffusion:
 
         return self.pipe
 
-    @method()
+    # @method()
     def run_inference(
         self,
         prompt: str,
@@ -268,7 +268,7 @@ class StableDiffusion:
         return results
 
 
-@stub.local_entrypoint()
+# @stub.local_entrypoint()
 def entrypoint(
     prompt: str,
     control_image_path: str,
@@ -288,7 +288,7 @@ def entrypoint(
     control_image_b64 = base64.b64encode(control_image_bytes).decode()
 
     if output_path is None:
-        output_path = "/tmp/aimages"
+        output_path = "./output"
     output_path = Path(output_path)
     if not output_path.exists():
         output_path.mkdir(exist_ok=True, parents=True)
